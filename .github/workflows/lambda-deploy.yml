@@ -1,4 +1,4 @@
-name: Deploy Lambda Function
+name: Deploy AWS Lambda Function
 
 on:
   push:
@@ -6,38 +6,35 @@ on:
       - main
 
 jobs:
-  deploy:
+  deploy_lambda:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up AWS credentials
+      - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }} # 确保在 GitHub Secrets 中设置了 AWS_REGION
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install dependencies
-        run: |
-          # 如果您的 Lambda 函数依赖于外部模块，请取消注释并适当修改下面的命令
-          # npm install
-
-      - name: Package Lambda function
-        run: zip -r function.zip . # 打包 Lambda 函数和依赖
+      - name: Package Lambda function code
+        run: zip -r function.zip .
 
       - name: Deploy Lambda function
         run: |
-          aws lambda create-function --function-name demo-github \
-            --runtime nodejs14.x \
-            --role arn:aws:iam::123456789012:role/your_lambda_execution_role \
-            --handler index.handler \
-            --zip-file fileb://function.zip \
-            --region ${{ secrets.AWS_REGION }} \
-          || aws lambda update-function-code --function-name demo-github \
-            --zip-file fileb://function.zip \
-            --region ${{ secrets.AWS_REGION }}
+          aws lambda get-function --function-name demo-github || not_exist=true
+          if [ "$not_exist" = true ]; then
+            aws lambda create-function --function-name demo-github \
+              --runtime nodejs14.x \
+              --role arn:aws:iam::123456789012:role/your_lambda_execution_role \
+              --handler index.handler \
+              --zip-file fileb://function.zip
+          else
+            aws lambda update-function-code --function-name demo-github \
+              --zip-file fileb://function.zip
+          fi
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
