@@ -17,11 +17,11 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2 # 确保与您的Lambda函数所在的区域匹配
+          aws-region: us-east-2
 
       - name: Package Lambda function code
         run: |
-          npm install  
+          npm install
           zip -r function.zip .
 
       - name: Deploy Lambda function
@@ -31,7 +31,7 @@ jobs:
           if echo "${function_exists}" | grep -q 'ResourceNotFoundException'; then
             echo "Function does not exist, creating..."
             aws lambda create-function --function-name demo-github \
-              --runtime nodejs14.x \
+              --runtime nodejs20.x \
               --role arn:aws:iam::462445180795:role/MyLambdaRole \
               --handler index.handler \
               --zip-file fileb://function.zip
