@@ -17,7 +17,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1 # 替换为您的 AWS 区域
+          aws-region: us-east-2
 
       - name: Package Lambda function code
         run: |
@@ -32,8 +32,8 @@ jobs:
             echo "Function does not exist, creating..."
             aws lambda create-function --function-name demo-github \
               --runtime nodejs14.x \
-              --role arn:aws:iam::462445180795:role/MyLambdaRole \ # 使用您的实际角色 ARN
-              --handler index.handler \ # 确保此处与您的入口点匹配
+              --role arn:aws:iam::462445180795:role/MyLambdaRole \ 
+              --handler index.handler \ 
               --zip-file fileb://function.zip
           else
             echo "Function exists, updating..."
