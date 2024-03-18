@@ -32,8 +32,8 @@ jobs:
             echo "Function does not exist, creating..."
             aws lambda create-function --function-name demo-github \
               --runtime nodejs14.x \
-              --role arn:aws:iam::462445180795:role/MyLambdaRole \ 
-              --handler index.handler \ 
+              --role arn:aws:iam::462445180795:role/MyLambdaRole \ # 确保这里的角色 ARN 正确
+              --handler index.handler \ # 确保此处与您的代码中的函数匹配
               --zip-file fileb://function.zip
           else
             echo "Function exists, updating..."
