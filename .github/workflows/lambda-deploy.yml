@@ -28,7 +28,7 @@ jobs:
           if [ "$not_exist" = true ]; then
             aws lambda create-function --function-name demo-github \
               --runtime nodejs14.x \
-              --role arn:aws:iam::123456789012:role/your_lambda_execution_role \
+              --role arn:aws:iam::462445180795:role/MyLambdaRole         
               --handler index.handler \
               --zip-file fileb://function.zip
           else
